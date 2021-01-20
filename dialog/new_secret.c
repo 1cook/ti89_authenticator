@@ -2,6 +2,8 @@
 #include "../save/util.h"
 #include "../save/secret_file.h"
 #include "../save/manifest.h"
+#include "../codes/hotp/hotp.h"
+#include "../time/time.h"
 
 #include <dialogs.h>
 #include <alloc.h>
@@ -208,6 +210,17 @@ int run_new_secret_dialog (HANDLE manifest_handle, int wide_format) {
 			goto invalid_input;
 		}
 		ls.secret = decoded_secret;
+		
+		short time_zone;
+		if (get_time_zone (manifest_handle, &time_zone) != MANIFEST_OK)
+			return ND_ERROR;
+		int64_t current_time = get_timestamp (0, time_zone);
+		hotp (ls.current_code, ls.secret, ls.secret_len, current_time / ls.period, ls.code_len);
+		if (DlgMessage ("Please confirm the correct code:", ls.current_code, BT_OK, BT_NO) == KEY_ESC) {
+			invalid_input_msg = "Please try again.";
+			goto invalid_input;
+		}
+		
 		int file_result = write_secret (&ls, file_name);
 		if (file_result == SECRET_ALREADY_EXISTS || file_result == SECRET_RESERVED_NAME) {
 			invalid_input_msg = "Please choose a different file name.";

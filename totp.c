@@ -19,9 +19,6 @@
 const char ERROR_MEM [] = "You may not have enough memory.";
 const char NO_SECRETS [] = "No secrets.";
 
-const char *DOW [7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-const char *MOY [12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
 int guarantee_at_least_one_secret (HANDLE manifest_file, int wide_format) {
 	/* special case: user has no secrets loaded. this happens always on first run 
 	 * it can also happen on deletion
@@ -70,34 +67,28 @@ int main_loop (struct menu_state *ms, short time_zone, int wide_format) {
 		key_down = 340;
 	}
 	
-	
-	unsigned short year, month, day, hour, minute, second;
 	/* next update at */
 	unsigned long next_update_at = 0;
+	int64_t current_time = 0;
 	
 	void *kq = kbd_queue ();
-	char statline_string [60];
 	
 	for (;;) {
 		unsigned short key;
 		if (FiftyMsecTick >= next_update_at) {
 			next_update_at = FiftyMsecTick + 20;
+			
 			/* get time */
-			DateAndTime_Get (&year, &month, &day, &hour, &minute, &second);
-			int64_t current_time = timestamp_from_civil (year, month, day, hour, minute, second);
-			current_time -= time_zone * 60;
-		
+			current_time = get_timestamp (1, time_zone);
+			
 			/* update codes on screen 
 			* on the first run, the last time updated variable f
 			* or each loaded secret is -1, guaranteeing an update
 			* even as force_update is set to 0
 			*/
+			
 			if (update_codes (ms, current_time, 0) == 0)
 				return EXIT_FAILURE;
-			
-			unsigned short dow = DayOfTheWeek (year, month, day);
-			sprintf(statline_string, "%02d %s %04d %s %02d:%02d:%02d", day, MOY [month - 1], year, DOW [dow - 1], hour, minute, second);
-			ST_helpMsg (statline_string);
 		}
 		/* Handle keypress */
 		if (!OSdequeue (&key, kq)) {

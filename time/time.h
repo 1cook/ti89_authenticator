@@ -1,6 +1,8 @@
 #ifndef TIME_H
 #define TIME_H
 
+#define MIN_AMS 207
+
 #include <inttypes.h>
 
 /*
@@ -17,6 +19,9 @@ int64_t timestamp_from_civil (
 	unsigned short minute,
 	unsigned short second
 );
+
+int64_t get_timestamp (int set_stat, short time_zone);
+
 #endif
 
 /* The calculator also has no concept of time-zones.
