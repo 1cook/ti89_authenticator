@@ -113,7 +113,6 @@ int update_single_code (struct menu_state *ms, unsigned short row, unsigned shor
 					ls->next_update_at = (period + 1) * ((int64_t)ls->period);
 				}
 				if (code_change || force_draw) {
-					ST_busy (ST_BUSY);
 					draw_tile (&ms->ts, row, col, ls->current_code, ls->label, ls->code_len <= 8);
 				}
 			}

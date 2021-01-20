@@ -76,7 +76,6 @@ int main_loop (struct menu_state *ms, short time_zone, int wide_format) {
 	unsigned long next_update_at = 0;
 	
 	void *kq = kbd_queue ();
-	unsigned statline_state = 0;
 	char statline_string [60];
 	
 	for (;;) {
@@ -87,12 +86,6 @@ int main_loop (struct menu_state *ms, short time_zone, int wide_format) {
 			DateAndTime_Get (&year, &month, &day, &hour, &minute, &second);
 			int64_t current_time = timestamp_from_civil (year, month, day, hour, minute, second);
 			current_time -= time_zone * 60;
-			
-			if (statline_state == 0) {
-				unsigned short dow = DayOfTheWeek (year, month, day);
-				sprintf(statline_string, "%02d %s %04d %s %02d:%02d:%02d", day, MOY [month - 1], year, DOW [dow - 1], hour, minute, second);
-				ST_helpMsg (statline_string);
-			}
 		
 			/* update codes on screen 
 			* on the first run, the last time updated variable f
@@ -101,7 +94,10 @@ int main_loop (struct menu_state *ms, short time_zone, int wide_format) {
 			*/
 			if (update_codes (ms, current_time, 0) == 0)
 				return EXIT_FAILURE;
-			ST_busy (ST_IDLE);
+			
+			unsigned short dow = DayOfTheWeek (year, month, day);
+			sprintf(statline_string, "%02d %s %04d %s %02d:%02d:%02d", day, MOY [month - 1], year, DOW [dow - 1], hour, minute, second);
+			ST_helpMsg (statline_string);
 		}
 		/* Handle keypress */
 		if (!OSdequeue (&key, kq)) {
@@ -161,17 +157,7 @@ int main_loop (struct menu_state *ms, short time_zone, int wide_format) {
 					DlgMessage ("Filename", selected_filename, BT_OK, BT_NONE);
 				}
 			} else {
-				char *statline_msg = NULL;
-				if (statline_state == 0) {
-					statline_msg = "F1: New - F2: Open - F3: Delete";
-					statline_state = 1;
-				} else if (statline_state == 1) {
-					statline_msg = "F4: Timezone - F5: About";
-					statline_state = 2;
-				} else {
-					statline_state = 0;
-				}
-				ST_helpMsg (statline_msg);
+				DlgMessage ("Controls:", "F1: New Secret\nF2: Open Secret file\nF3: Remove Secret\nF4: Adjust time zone\nF5: About", BT_OK, BT_NONE);
 			}
 		}
 		idle ();
@@ -259,7 +245,9 @@ void _main (void) {
 			exit (EXIT_FAILURE);
 		}
 	}
-		
+	
+	ST_busy(ST_IDLE);
+	
 	/* Step 6: Enter Main Loop */
 	error_code = main_loop (&ms, tz, wide_format);
 	if (error_code == EXIT_SUCCESS)
