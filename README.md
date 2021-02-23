@@ -7,6 +7,8 @@ Authenticator app (RFC 6238) for the Ti-89 and Ti-92 series of calculators. This
 Running `make` within the main directory produces file file bin/totp.89z. You must have `make` and `gcc4ti` installed. Compilation works on linux only.
 I will include a pre-compiled binary file in the [releases](https://github.com/1cook/ti89_authenticator/releases).
 
+This single file will run on The Ti-89*, Ti-92 Plus*, Ti-89 Titanium, and Voyage 200.
+
 Once you have the binary, transfer the file to a calculator using a linking program such as [TiLP](http://lpg.ticalc.org/prj_tilp/) or Ti-Graphlink.
 
 (*) It should theoretically work on these calcualtors, but I have not tested it on them because I do not own these models.
