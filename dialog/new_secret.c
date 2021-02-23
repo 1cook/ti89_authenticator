@@ -105,19 +105,19 @@ DIALOG dialog_new_file = {
 			.Type = D_EDIT_FIELD,
 			.x0 = 5, .y0 = 25,
 			.Flags = DF_SCROLLABLE,
-			.f.dEdit = {.oText = 18, .bOffset = 68, .Flen = 16, .Dlen = 12}
+			.f.dEdit = {.oText = 18, .bOffset = 68, .Flen = 25, .Dlen = 12}
 		},
 		{ /* Period - Text Box */
 			.Type = D_EDIT_FIELD,
 			.x0 = 5, .y0 = 35,
 			.Flags = 0,
-			.f.dEdit = {.oText = 24, .bOffset = 88, .Flen = 3, .Dlen = 5}
+			.f.dEdit = {.oText = 24, .bOffset = 96, .Flen = 3, .Dlen = 5}
 		},
 		{ /* Code Length - Text Box */
 			.Type = D_EDIT_FIELD,
 			.x0 = 5, .y0 = 45,
 			.Flags = 0,
-			.f.dEdit = {.oText = 31, .bOffset = 96, .Flen = 2, .Dlen = 4}
+			.f.dEdit = {.oText = 31, .bOffset = 104, .Flen = 2, .Dlen = 4}
 		},
 		{ /* File Name - Text Box */
 			.Type = D_EDIT_FIELD,
@@ -138,8 +138,8 @@ int run_new_secret_dialog (HANDLE manifest_handle, int wide_format) {
 	char request_buf [120];
 	char *secret = &request_buf [0];
 	char *label = &request_buf [68];
-	char *period_txt = &request_buf [88];
-	char *code_len_txt = &request_buf [96];
+	char *period_txt = &request_buf [96];
+	char *code_len_txt = &request_buf [104];
 	char *file_name = &request_buf [108];
 	short res;
 	/* The way the OS chooses specify pointers to text in dialogs is absolutely bizzare */

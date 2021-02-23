@@ -4,6 +4,8 @@ CFLAGS = -std=c89 -c -Wall -Os
 all: bin/totp.89z
 
 bin/totp.89z: bin/sha1.o bin/hmac.o bin/hotp.o bin/time.o bin/tile.o bin/secret_file.o bin/secret_util.o bin/secret_manifest.o bin/new_secret.o bin/time_zone.o bin/main_menu.o totp.c
+	chmod 700 commit_hash.sh
+	./commit_hash.sh
 	$(CC) -Wall -Os bin/sha1.o bin/hmac.o bin/hotp.o bin/time.o bin/tile.o bin/secret_file.o bin/secret_util.o bin/secret_manifest.o bin/new_secret.o bin/time_zone.o bin/main_menu.o totp.c -o bin/totp.89z
 
 bin/time.o: time/time.c

@@ -90,6 +90,7 @@ int write_secret (struct loaded_secret *sec, char *secret_file_name) {
 	sec->file_handle = h;
 	sec->secret = secret;
 	sec->label = label;
+	sec->archived = 0;
 	return SECRET_OK;
 	error_with_file_created:
 	HSymDel (hs);
@@ -119,6 +120,7 @@ int read_secret (struct loaded_secret *sec, char *secret_file_name) {
 		return SECRET_OTHER_ERROR;
 	if (se->flags.bits.folder)
 		return SECRET_FILE_INVALID;
+	sec->archived = se->flags.bits.archived == 1;
 	MULTI_EXPR *calc_var = HeapDeref (se->handle);
 	if (calc_var == NULL)
 		return SECRET_OTHER_ERROR;

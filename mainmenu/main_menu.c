@@ -13,7 +13,7 @@ unsigned short position (struct menu_state *ms) {
 void clear_single_tile (struct menu_state *ms, unsigned short row, unsigned short col) {
 	if (ms->loaded_secrets [row][col] != H_NULL) {
 		struct loaded_secret *ls = HeapDeref (ms->loaded_secrets [row][col]);
-		if (ls != NULL)
+		if (ls != NULL && !ls->archived)
 			HeapUnlock (ls->file_handle);
 		HeapFree (ms->loaded_secrets [row][col]);
 		ms->loaded_secrets [row][col] = H_NULL;
@@ -54,14 +54,14 @@ int load_single_file (struct menu_state *ms, unsigned short pos, unsigned short 
 	if (read_res == SECRET_MEM || read_res == SECRET_OTHER_ERROR)
 		return 0;
 	else if (read_res == SECRET_OK) {
-		if (HeapLock (ls->file_handle) == H_NULL)
-			return 0;
+		if (!ls->archived)
+			if (HeapLock (ls->file_handle) == H_NULL)
+				return 0;
 		HeapUnlock (ms->loaded_secrets [row][col]);
 		ms->errors [row][col] = 0;
 		ls->next_update_at = -1;
 		return 1;
 	} else {
-		HeapUnlock (ls->file_handle);
 		HeapFree (ms->loaded_secrets [row][col]);
 		ms->loaded_secrets [row][col] = H_NULL;
 		ms->errors [row][col] = 2;

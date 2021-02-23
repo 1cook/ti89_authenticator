@@ -1,0 +1,6 @@
+[submodule "hash/sha1/sha1"]
+	path = hash/sha1/sha1
+	url = https://github.com/clibs/sha1.git
+[submodule "codes/hash/sha1/sha1"]
+	path = codes/hash/sha1/sha1
+	url = https://github.com/clibs/sha1.git

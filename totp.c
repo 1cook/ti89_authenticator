@@ -14,8 +14,13 @@
 #include "dialog/new_secret.h"
 #include "time/time.h"
 
+#include "bin/commit_hash.h"
+
 const char ERROR_MEM [] = "You may not have enough memory.";
 const char NO_SECRETS [] = "No secrets.";
+
+const char *DOW [7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+const char *MOY [12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 int guarantee_at_least_one_secret (HANDLE manifest_file, int wide_format) {
 	/* special case: user has no secrets loaded. this happens always on first run 
@@ -71,15 +76,23 @@ int main_loop (struct menu_state *ms, short time_zone, int wide_format) {
 	unsigned long next_update_at = 0;
 	
 	void *kq = kbd_queue ();
+	unsigned statline_state = 0;
+	char statline_string [60];
 	
 	for (;;) {
 		unsigned short key;
 		if (FiftyMsecTick >= next_update_at) {
-			next_update_at = FiftyMsecTick += 20;
+			next_update_at = FiftyMsecTick + 20;
 			/* get time */
 			DateAndTime_Get (&year, &month, &day, &hour, &minute, &second);
 			int64_t current_time = timestamp_from_civil (year, month, day, hour, minute, second);
 			current_time -= time_zone * 60;
+			
+			if (statline_state == 0) {
+				unsigned short dow = DayOfTheWeek (year, month, day);
+				sprintf(statline_string, "%02d %s %04d %s %02d:%02d:%02d", day, MOY [month - 1], year, DOW [dow - 1], hour, minute, second);
+				ST_helpMsg (statline_string);
+			}
 		
 			/* update codes on screen 
 			* on the first run, the last time updated variable f
@@ -137,6 +150,28 @@ int main_loop (struct menu_state *ms, short time_zone, int wide_format) {
 				if (res == TZ_MEM || res == TZ_ERROR)
 					return EXIT_FAILURE;
 				get_time_zone (ms->manifest_file, &time_zone);
+			} else if (key == KEY_F5) {
+				DlgMessage ("About", "Authenticator App (RFC-6238)\nBy: Harrison Cook\nCompiled on GCC4TI\n"
+				"GIT: " COMMIT_HASH
+				, BT_OK, BT_NONE);
+			} else if (key == KEY_ENTER) {
+				char selected_filename [9];
+				if (get_file (ms->manifest_file, selected_filename, position (ms)) == MANIFEST_OK) {
+					selected_filename [8] = '\0';
+					DlgMessage ("Filename", selected_filename, BT_OK, BT_NONE);
+				}
+			} else {
+				char *statline_msg = NULL;
+				if (statline_state == 0) {
+					statline_msg = "F1: New - F2: Open - F3: Delete";
+					statline_state = 1;
+				} else if (statline_state == 1) {
+					statline_msg = "F4: Timezone - F5: About";
+					statline_state = 2;
+				} else {
+					statline_state = 0;
+				}
+				ST_helpMsg (statline_msg);
 			}
 		}
 		idle ();

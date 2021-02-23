@@ -11,6 +11,7 @@
 struct loaded_secret {
 	/* handle of the loaded file */
 	HANDLE file_handle;
+	int archived;
 	/* this is not zero terminated and not necessairly ASCII  */
 	unsigned char *secret;
 	unsigned int secret_len;
