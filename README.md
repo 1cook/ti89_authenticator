@@ -3,9 +3,9 @@ TOTP Authenticator App for Texas instruments calcualtors
 
 Authenticator app (RFC 6238) for the Ti-89 and Ti-92 series of calculators. This app is compatible with google authenticator.
 
-## Compile
-Running `make` within the main directory produces file file bin/totp.89z. This single file will run on The Ti-89*, Ti-92 Plus*, Ti-89 Titanium, and Voyage 200.
-We will include a pre-compiled binary for those who do not want to install the compiler and compile.
+## Install 
+Running `make` within the main directory produces file file bin/totp.89z. This single file will run on The Ti-89*, Ti-92 Plus*, Ti-89 Titanium, and Voyage 200. 
+I will include a pre-compiled binary file in the [releases](https://github.com/1cook/ti89_authenticator/releases)
 
 (*) It should theoretically work on these calcualtors, but I have not tested it on them because I do not own these models.
 
@@ -46,4 +46,4 @@ List of possible reasons, in decreasing order of likelihood:
 + You set the time-zone wrongly. Set the time zone by pressing F4 from the main menu.
 + You set the clock wrongly. Set the clock.
 + You entered the secret key wrongly into the calculator. Delete the file by selecting it and pressing F3. Then press F1 to try adding the file again.
-+ There is a bug. Raise an issue in github. Be detailed; provide exact instructions on how to reproduce the bug, include the particular secret that you used (after you replaced the secret with your service).
++ There is a bug. Raise an [issue](https://github.com/1cook/ti89_authenticator/issues) in github. Be detailed; provide exact instructions on how to reproduce the bug, include the particular secret that you used (after you replaced the secret with your service).
