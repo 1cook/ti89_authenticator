@@ -26,6 +26,11 @@ const unsigned char conversion_table [] = {
  * or 0 if unsuccessful
  * Adapted from a similar function in CyoEncode Library
  */
+/* converts base32 string to binary
+ * Returns length of converted binary string
+ * or 0 if unsuccessful
+ * Adapted from a similar function in CyoEncode Library
+ */
 unsigned short base_32 (unsigned char *dst, char *src) {
 	unsigned short i, ii = 0;
 	unsigned char *tmp_dst = dst;
@@ -38,14 +43,18 @@ unsigned short base_32 (unsigned char *dst, char *src) {
 		if (converted_character >= 32) {
 			if (converted_character == 0xfe)
 				continue; /* character is ignored */
-			else if (converted_character == 32 && ii >= 2)
-				converted_character = 0;
 			else
 				return 0;
 			
 		}
 		tmp [ii++] = converted_character;
+		if (src [i + 1] == '\0') {
+			for (; ii < 8; ii += 1)
+				tmp [ii] = 0x20;
+			goto five_byte_output;
+		}
 		if (ii == 8) {
+			five_byte_output:
 			ii = 0;
 			*tmp_dst++ = ((tmp [0] & 0x1f) << 3) | ((tmp [1] & 0x1c) >> 2);
 			*tmp_dst++ = ((tmp [1] & 0x03) << 6) | ((tmp [2] & 0x1f) << 1) | ((tmp [3] & 0x10) >> 4);
@@ -59,13 +68,10 @@ unsigned short base_32 (unsigned char *dst, char *src) {
 			return 0;
 		} else {
 			unsigned short base_size = tmp_dst - dst;
-			int j, k;
+			int j;
 			for (j = 7; j >= 0; j -= 1)
-				if (tmp [j] != 0)
+				if (tmp [j] != 0x20)
 					break;
-			for (k = j - 1; k >= 0; k -= 1)
-				if (tmp [j] == 0)
-					return 0;
 			switch (j) {
 				case 7:
 					return base_size;
