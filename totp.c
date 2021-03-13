@@ -66,6 +66,7 @@ int main_loop (struct menu_state *ms, short time_zone, int wide_format) {
 		key_up = 337;
 		key_down = 340;
 	}
+	ST_busy(ST_IDLE);
 	
 	/* next update at */
 	unsigned long next_update_at = 0;
@@ -150,6 +151,7 @@ int main_loop (struct menu_state *ms, short time_zone, int wide_format) {
 			} else {
 				DlgMessage ("Controls:", "F1: New Secret\nF2: Open Secret file\nF3: Remove Secret\nF4: Adjust time zone\nF5: About", BT_OK, BT_NONE);
 			}
+			ST_busy(ST_IDLE);
 		}
 		idle ();
 	}
@@ -236,8 +238,6 @@ void _main (void) {
 			exit (EXIT_FAILURE);
 		}
 	}
-	
-	ST_busy(ST_IDLE);
 	
 	/* Step 6: Enter Main Loop */
 	error_code = main_loop (&ms, tz, wide_format);
