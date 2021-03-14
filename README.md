@@ -14,7 +14,7 @@ Once you have the binary, transfer the file to a calculator using a linking prog
 (*) It should theoretically work on these calcualtors, but I have not tested it on them because I do not own these models.
 
 ## Time settings
-You must ensure the system clock is set. You will also be asked about your local time-zone. If you are currently observing daylight savings time, add 1 to the hours. Incorrect time settings will cause incorrect codes.
+You must ensure the system clock is set. You will also be asked about your local time-zone. If you are currently observing daylight savings time, add 1 to the hours of your time-zone offset. Incorrect time settings will cause incorrect codes.
 
 If the app thinks that the clock is not set, it will ask you to set it.
 
