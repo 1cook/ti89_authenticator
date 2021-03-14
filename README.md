@@ -47,7 +47,7 @@ Do not share your secret keys or codes.
 ## Why are my codes wrong? What to do about it?
 List of possible reasons, in decreasing order of likelihood:
 + The clock was reset (because the battery was disconnected). Set the clock by closing the app, pressing F1 and selecting "Clock".
-+ You set the time-zone wrongly. Set the time zone by pressing F4 from the main menu.
-+ You set the clock wrongly. Set the clock.
-+ You entered the secret key wrongly into the calculator. Delete the file by selecting it and pressing F3. Then press F1 to try adding the file again.
++ The time-zone is incorrect. Set the time-zone by pressing F4 from the main menu.
++ The date/time is incorrect. Set the date/time.
++ You entered the secret key incorrectly into the calculator. Delete the file by selecting it and pressing F3. Then press F1 to try adding the file again.
 + There is a bug. Raise an [issue](https://github.com/1cook/ti89_authenticator/issues) in github. Be detailed; provide exact instructions on how to reproduce the bug, include the particular secret that you used (after you replaced the secret with your service).
