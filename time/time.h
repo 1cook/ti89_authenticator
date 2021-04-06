@@ -1,8 +1,6 @@
 #ifndef TIME_H
 #define TIME_H
 
-#define MIN_AMS 207
-
 #include <inttypes.h>
 
 /*

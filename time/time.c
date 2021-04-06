@@ -5,8 +5,8 @@
 #include <statline.h>
 #include <unknown.h>
 
-const char *DOW [7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-const char *MOY [12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+const char DOW [7][4] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+const char MOY [12][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 int64_t get_timestamp (int set_stat, short time_zone) {
 	unsigned short year, month, day, hour, minute, second;
