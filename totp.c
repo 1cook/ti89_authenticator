@@ -7,19 +7,23 @@
 
 #include <tigcclib.h>
 
-#include "save/util.h"
-#include "save/manifest.h"
-#include "mainmenu/main_menu.h"
-#include "dialog/time_zone.h"
-#include "dialog/new_secret.h"
-#include "time/time.h"
+#include "codes/hash/sha1/sha1/sha1.c"
+#include "codes/hmac/hmac.c"
+#include "codes/hotp/hotp.c"
+#include "time/time.c"
+#include "gfx/tile.c"
+#include "save/secret_file.c"
+//#include "save/util.c"
+#include "save/manifest.c"
+#include "dialog/new_secret.c"
+#include "dialog/time_zone.c"
+#include "mainmenu/main_menu.c"
 
 #include "bin/commit_hash.h"
 
-const char ERROR_MEM [] = "You may not have enough memory.";
 const char NO_SECRETS [] = "No secrets.";
 
-int guarantee_at_least_one_secret (HANDLE manifest_file, int wide_format) {
+static int guarantee_at_least_one_secret (HANDLE manifest_file, int wide_format) {
 	/* special case: user has no secrets loaded. this happens always on first run 
 	 * it can also happen on deletion
 	 */

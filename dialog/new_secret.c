@@ -33,7 +33,7 @@ const unsigned char conversion_table [] = {
  * or 0 if unsuccessful
  * Adapted from a similar function in CyoEncode Library
  */
-unsigned short base_32 (unsigned char *dst, char *src) {
+static unsigned short base_32 (unsigned char *dst, char *src) {
 	unsigned short i, ii = 0;
 	unsigned char *tmp_dst = dst;
 	char tmp [8];
@@ -142,7 +142,8 @@ char ERROR_TITLE [] = "Failed to save new secret.";
 char ERROR_MEM [] = "You may not have enough memory.";
 char ERROR_UNKNOWN [] = "An unknown error occured.";
 
-int run_new_secret_dialog (HANDLE manifest_handle, int wide_format) {
+/* sets up the dialog handle */
+static int run_new_secret_dialog (HANDLE manifest_handle, int wide_format) {
 	char request_buf [120];
 	char *secret = &request_buf [0];
 	char *label = &request_buf [68];
@@ -274,7 +275,7 @@ DIALOG dialog_open_file = {
 
 const char OPEN_SECRET_TEXT_BUF [] = "Open Secret\0File Name";
 
-int run_open_secret_dialog (HANDLE manifest_handle, int wide_format) {
+static int run_open_secret_dialog (HANDLE manifest_handle, int wide_format) {
 	char *invalid_input_msg = NULL;
 	char request_buf [9];
 	dialog_open_file.TextOffset = (void *) OPEN_SECRET_TEXT_BUF - (void *) &dialog_open_file;

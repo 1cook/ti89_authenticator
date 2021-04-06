@@ -3,7 +3,19 @@
 #include "hotp.h"
 #include "../hmac/hmac.h"
 
-void hotp (char *dst, unsigned char *key, unsigned int key_len, int64_t counter, unsigned int code_len) {
+/* HOTP as defined in RFC 4226 */
+static void hotp (
+	/* output of hotp. null terminated string with code.
+	 * allocated length must be code_len + 1 */
+    char *dst,
+	/* secret key */
+	unsigned char *key,
+	unsigned int key_len,
+	/* counter */
+	int64_t counter,
+	/* number of decimal digits for the code */
+	unsigned int code_len
+) {
 	/* Do Hmac with specified hash function */
 	unsigned char hmac_output [20];
 	hmac (hmac_output, key, key_len, (unsigned char *) &counter, 8);

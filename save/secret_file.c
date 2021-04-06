@@ -4,13 +4,13 @@
 #include <vat.h>
 
 #include "secret_file.h"
-#include "util.h"
+#include "util.c"
 
 const char FILE_TYPE_TAG [] = {0, 'S', 'E', 'C', 'R', 0, OTH_TAG};
 const char secrets_path [] = "secrets\\";
 const char SPECIAL_RESERVED_NAME [] = "manifest";
 
-int is_valid_name (char *name) {
+static int is_valid_name (char *name) {
 	unsigned short i;
 	for (i = 0; i < 8; i++) {
 		if (name [i] == '\0')
@@ -21,7 +21,21 @@ int is_valid_name (char *name) {
 	return 0;
 }
 
-int write_secret (struct loaded_secret *sec, char *secret_file_name) {
+/* These function take the secret file name as an zero terminated
+ * ASCII string and a pointer to a loaded_secret.
+ * they could return any one of the return codes defined in util.h */
+
+/* before calling either of these functions, make sure to call
+ * create_directory of util.h and that it is successful */
+
+/* Just so you know, accessing files on the calculator's file system
+ * is a highly bizarre process consisting of many steps,
+ * involving many system calls, of which some are buggy, and if one
+ * gets a single step wrong, they risk crashing the entire os. This
+ * crash could happen even after the user program terminates.
+ * It took many long hours to debug just these two functions */
+
+static int write_secret (struct loaded_secret *sec, char *secret_file_name) {
 	char file_name_buffer [9];
 	char *file_sym_str_p = convert_to_sym_str (file_name_buffer, secret_file_name);
 	/* check for reserved names */
@@ -97,10 +111,9 @@ int write_secret (struct loaded_secret *sec, char *secret_file_name) {
 	error_with_memory_allocated:
 	HeapFree (h);
 	return SECRET_OTHER_ERROR;
-	
 }
 
-int read_secret (struct loaded_secret *sec, char *secret_file_name) {
+static int read_secret (struct loaded_secret *sec, char *secret_file_name) {
 	char file_name_buffer [9], full_path_buffer [20], full_path [20];
 	char *file_sym_str_p = convert_to_sym_str (file_name_buffer, secret_file_name);
 	/* check for reserved names */
@@ -165,5 +178,4 @@ int read_secret (struct loaded_secret *sec, char *secret_file_name) {
 		return SECRET_FILE_INVALID;
 	sec->file_handle = se->handle;
 	return SECRET_OK;
-	
 }

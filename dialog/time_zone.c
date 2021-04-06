@@ -46,7 +46,8 @@ DIALOG dialog_time_zone = {
 
 const char TIME_ZONE_BUF [] = "Enter the UTC offset for your time zone\0If negative, enter the\0minus sign in the hours field.\0Hours\0Minutes";
 
-int run_time_zone_dialog (HANDLE manifest_handle, int wide_format) {
+/* dialog for setting the time zone */
+static int run_time_zone_dialog (HANDLE manifest_handle, int wide_format) {
 	char *invalid_input_reason = NULL;
 	short tz;
 	char request_buffer [16];
