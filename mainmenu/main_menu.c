@@ -189,8 +189,10 @@ static int move_cursor_up (struct menu_state *ms) {
 			clear_single_tile (ms, ms->row_len - 1, col);
 		/* step 2: move all tiles down by one position */
 		for (row = ms->row_len - 2; row >= 0; row--)
-			for (col = 0; col < ms->col_len; col++)
+			for (col = 0; col < ms->col_len; col++) {
 				ms->loaded_secrets [row + 1][col] = ms->loaded_secrets [row][col];
+				ms->errors [row + 1][col] = ms->errors [row][col];
+			}
 		/* step 3: increment top position upwards */
 		ms->top_pos -= ms->col_len;
 		/* step 4: fill top tiles */
@@ -226,8 +228,10 @@ static int move_cursor_down (struct menu_state *ms) {
 			clear_single_tile (ms, 0, col);
 	/* step 2: move all tiles up by one position */
 	for (row = 0; row < ms->row_len - 1; row++)
-		for (col = 0; col < ms->col_len; col++)
+		for (col = 0; col < ms->col_len; col++) {
 			ms->loaded_secrets [row][col] = ms->loaded_secrets [row + 1][col];
+			ms->errors [row][col] = ms->errors [row + 1][col];
+		}
 	/* step 3: increment top position upwards */
 	ms->top_pos += ms->col_len;
 	/* step 4: fill bottom tiles */
