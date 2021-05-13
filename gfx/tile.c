@@ -29,7 +29,7 @@ const WIN_RECT coords [4][3] = {
 	}
 };
 
-WINDOW *get_window (struct tile_state *ts, unsigned short row, unsigned short col) {
+static WINDOW *get_window (struct tile_state *ts, unsigned short row, unsigned short col) {
 	if (!ts->active [row][col]) {
 		if (WinOpen (&ts->windows [row][col], &coords [row][col], WF_SAVE_SCR)) {
 			ts->active [row][col] = 1;
@@ -40,7 +40,7 @@ WINDOW *get_window (struct tile_state *ts, unsigned short row, unsigned short co
 	return &ts->windows [row][col];
 }
 
-int draw_tile (struct tile_state *ts, unsigned short row, unsigned short col, const char *code, const char *label, int large) {
+static int draw_tile (struct tile_state *ts, unsigned short row, unsigned short col, const char *code, const char *label, int large) {
 	WINDOW *w = get_window (ts, row, col);
 	WinActivate (w);
 	WinClr (w);
@@ -49,21 +49,21 @@ int draw_tile (struct tile_state *ts, unsigned short row, unsigned short col, co
 	if (large)
 		WinFont (w, F_8x10);
 	else
-		WinFont (w, F_6x8);	
+		WinFont (w, F_6x8);
 	WinStrXY (w, 2, 1, code);
 	WinFont (w, F_4x6);
 	WinStrXY (w, 2, 11, label);
 	return 1;
 }
 
-void close_tile (struct tile_state *ts, unsigned short row, unsigned short col) {
+static void close_tile (struct tile_state *ts, unsigned short row, unsigned short col) {
 	if (ts->active [row][col]) {
 		WinClose (&ts->windows [row][col]);
 		ts->active [row][col] = 0;
 	}
 }
 
-void destruct_tiles (struct tile_state *ts) {
+static void destruct_tiles (struct tile_state *ts) {
 	unsigned short x,y;
 	for (x = 0; x < 4; x++)
 	for (y = 0; y < 3; y++)

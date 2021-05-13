@@ -7,14 +7,24 @@
 #define HMAC_IPAD 0x36
 #define HMAC_OPAD 0x5c
 
-void hmac (
-	unsigned char *dst,	
+/* HMAC as defined in RFC 2104 */
+static void hmac (
+	/* 
+	 * pointer to output result
+	 * assumed to be large enough for hash output
+	 */
+	unsigned char *dst,
+	/* pointer to secret key, must be key_length bytes long */
 	unsigned char *key,
+	/* length of secret key. not longer than 64 bytes.
+	 * if you have a longer key, then apply the hash function 
+	 * to it before passing it into this function */
 	unsigned int key_len,
+	/* message to compute HMAC over */
 	unsigned char *data,
+	/* length of message to compute HMAC over */
 	unsigned int data_len
-)
-{
+) {
 	unsigned int i;
 	unsigned char k_inner [64];
 	unsigned char k_outer [64];

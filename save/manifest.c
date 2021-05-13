@@ -10,7 +10,17 @@ char *MANIFEST_FILE_P = MANIFEST_FILE + sizeof (MANIFEST_FILE) - 1;
 char MANIFEST_TYPE_TAG [] = {0, 'M', 'A', 'N', 'F', 0, OTH_TAG};
 char MANIFEST_HEAD [] = {'M', 'A', 'N', 'F'};
 
-HANDLE init_manifest (int *error_code) {
+/* call create_directory of util.h before calling any of these
+ * below functions
+ */
+
+/* loads the manifest file, creates if it does not already exists
+ * returns the handle to the file or H_NULL if unsuccessful
+ * 
+ * this does not guarantee that the files listed in the manifest
+ * actually exist or are valid
+ */
+static HANDLE init_manifest (int *error_code) {
 	HSym hs = SymFind (MANIFEST_FILE_P);
 	if (hs.folder == 0) {
 		/* the file does not exists. must now create it */
@@ -126,7 +136,10 @@ HANDLE init_manifest (int *error_code) {
 	}
 }
 
-int set_time_zone (HANDLE manifest_handle, short tz) {
+/* tz is the timezone utc offset expressed in minutes 
+ * returns one of the error codes
+ */
+static int set_time_zone (HANDLE manifest_handle, short tz) {
 	MULTI_EXPR *calc_var = HeapDeref (manifest_handle);
 	if (calc_var == NULL)
 		return MANIFEST_OTHER_ERROR;
@@ -134,7 +147,9 @@ int set_time_zone (HANDLE manifest_handle, short tz) {
 	return MANIFEST_OK;
 }
 
-int get_time_zone (HANDLE manifest_handle, short *tz) {
+/* like set_time_zone. tz will be filled with the current time zone
+ */
+static int get_time_zone (HANDLE manifest_handle, short *tz) {
 	MULTI_EXPR *calc_var = HeapDeref (manifest_handle);
 	if (calc_var == NULL)
 		return MANIFEST_OTHER_ERROR;
@@ -142,7 +157,8 @@ int get_time_zone (HANDLE manifest_handle, short *tz) {
 	return MANIFEST_OK;
 }
 
-int set_position (HANDLE manifest_handle, unsigned short pos) {
+/* these are just like set_time_zone and get_time_zone respectively */
+static int set_position (HANDLE manifest_handle, unsigned short pos) {
 	MULTI_EXPR *calc_var = HeapDeref (manifest_handle);
 	if (calc_var == NULL)
 		return MANIFEST_OTHER_ERROR;
@@ -150,7 +166,7 @@ int set_position (HANDLE manifest_handle, unsigned short pos) {
 	return MANIFEST_OK;
 }
 
-int get_position (HANDLE manifest_handle, unsigned short *pos) {
+static int get_position (HANDLE manifest_handle, unsigned short *pos) {
 	MULTI_EXPR *calc_var = HeapDeref (manifest_handle);
 	if (calc_var == NULL)
 		return MANIFEST_OTHER_ERROR;
@@ -158,7 +174,8 @@ int get_position (HANDLE manifest_handle, unsigned short *pos) {
 	return MANIFEST_OK;
 }
 
-int add_file (HANDLE manifest_handle, char *file_name) {
+/* adds a filename onto the end of the manifest file */
+static int add_file (HANDLE manifest_handle, char *file_name) {
 	MULTI_EXPR *calc_var = HeapDeref (manifest_handle);
 	if (calc_var == NULL)
 		return MANIFEST_OTHER_ERROR;
@@ -192,7 +209,11 @@ int add_file (HANDLE manifest_handle, char *file_name) {
 	return MANIFEST_OK;	
 }
 
-int get_file (HANDLE manifest_handle, char *file_name, unsigned short index) {
+/* gets a file name from the manifest file 
+ * file name points to a buffer that is at least nine bytes long.
+ * will write the name of the file to it, adding zero terminator.
+ */
+static int get_file (HANDLE manifest_handle, char *file_name, unsigned short index) {
 	MULTI_EXPR *calc_var = HeapDeref (manifest_handle);
 	if (calc_var == NULL)
 		return MANIFEST_OTHER_ERROR;
@@ -205,7 +226,7 @@ int get_file (HANDLE manifest_handle, char *file_name, unsigned short index) {
 	return MANIFEST_OK;
 }
 
-int remove_file (HANDLE manifest_handle, unsigned short index) {
+static int remove_file (HANDLE manifest_handle, unsigned short index) {
 	MULTI_EXPR *calc_var = HeapDeref (manifest_handle);
 	if (calc_var == NULL)
 		return MANIFEST_OTHER_ERROR;
@@ -225,7 +246,8 @@ int remove_file (HANDLE manifest_handle, unsigned short index) {
 	return MANIFEST_OK;
 }
 
-int swap_positions (HANDLE manifest_handle, unsigned short pos1, unsigned short pos2) {
+/* swaps the positions of one file with another in the manifest */
+static int swap_positions (HANDLE manifest_handle, unsigned short pos1, unsigned short pos2) {
 	char tmp [8];
 	MULTI_EXPR *calc_var = HeapDeref (manifest_handle);
 	if (calc_var == NULL)
@@ -239,7 +261,7 @@ int swap_positions (HANDLE manifest_handle, unsigned short pos1, unsigned short 
 	return MANIFEST_OK;
 }
 
-unsigned short get_size (HANDLE manifest_handle) {
+static unsigned short get_size (HANDLE manifest_handle) {
 	MULTI_EXPR *calc_var = HeapDeref (manifest_handle);
 	if (calc_var == NULL)
 		return 0;

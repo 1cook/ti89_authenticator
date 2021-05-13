@@ -5,12 +5,18 @@
 #include "../save/manifest.h"
 #include "../save/util.h"
 
+
+/* If any of these functions return zero, the menu_state struct 
+ * can be considered in a broken state.
+ * must call clear state immediately and exit the program
+ */
+
 /* returns the position of the selected column */
-unsigned short position (struct menu_state *ms) {
+static unsigned short position (struct menu_state *ms) {
 	return ms->top_pos + ms->col_len * ms->cur_row + ms->cur_col;
 }
 
-void clear_single_tile (struct menu_state *ms, unsigned short row, unsigned short col) {
+static void clear_single_tile (struct menu_state *ms, unsigned short row, unsigned short col) {
 	if (ms->loaded_secrets [row][col] != H_NULL) {
 		struct loaded_secret *ls = HeapDeref (ms->loaded_secrets [row][col]);
 		if (ls != NULL && !ls->archived)
@@ -21,7 +27,8 @@ void clear_single_tile (struct menu_state *ms, unsigned short row, unsigned shor
 	}
 }
 
-void clear_state (struct menu_state *ms) {
+/* frees the memory in the menu state. unlocks all locked files */
+static void clear_state (struct menu_state *ms) {
 	unsigned short row, col;
 	for (row = 0; row < 4; row++)
 	for (col = 0; col < 3; col++)
@@ -33,7 +40,7 @@ void clear_state (struct menu_state *ms) {
  * Returns 1 if successfull ( or at least unsuccessful for a reason that we can handle)
  * 0 otherwise
  */
-int load_single_file (struct menu_state *ms, unsigned short pos, unsigned short row, unsigned short col) {
+static int load_single_file (struct menu_state *ms, unsigned short pos, unsigned short row, unsigned short col) {
 	char file_name [9];
 	int read_res = get_file (ms->manifest_file, file_name, pos);
 	if (read_res == MANIFEST_OTHER_ERROR)
@@ -69,7 +76,10 @@ int load_single_file (struct menu_state *ms, unsigned short pos, unsigned short 
 	} 
 }
 
-int reset_at_position (struct menu_state *ms, unsigned short top) {
+/* resets the menu state to the position putting the cursor at the top left and the position at top 
+ * returns 0 on failure, 1 on success, 2 if no codes are in the manifest.
+ */
+static int reset_at_position (struct menu_state *ms, unsigned short top) {
 	unsigned int row, col;
 	clear_state (ms);
 	unsigned short size = get_size (ms->manifest_file);
@@ -97,7 +107,7 @@ int reset_at_position (struct menu_state *ms, unsigned short top) {
 	return 1;
 }
 
-int update_single_code (struct menu_state *ms, unsigned short row, unsigned short col, int64_t current_time, int force_draw) {
+static int update_single_code (struct menu_state *ms, unsigned short row, unsigned short col, int64_t current_time, int force_draw) {
 	int code_change = 0;
 	if (ms->errors [row][col]) {
 		return draw_tile (&ms->ts, row, col, "Error", "Check file content", 0);
@@ -122,7 +132,8 @@ int update_single_code (struct menu_state *ms, unsigned short row, unsigned shor
 	return code_change || force_draw;
 }
 
-int update_codes (struct menu_state *ms, int64_t current_time, int force_draw) {
+/* updates all codes that need upated */
+static int update_codes (struct menu_state *ms, int64_t current_time, int force_draw) {
 	/* update all codes on the screen. forcing a draw change if needed
 	 * also, redraw the last if needed in order to keep it appearing selected
 	 */
@@ -142,7 +153,7 @@ int update_codes (struct menu_state *ms, int64_t current_time, int force_draw) {
 	return 1;
 }
 
-int move_cursor_left (struct menu_state *ms) {
+static int move_cursor_left (struct menu_state *ms) {
 	int new_col = (ms->cur_col > 0) ? (ms->cur_col - 1) : ms->col_len - 1;
 	if (ms->loaded_secrets [ms->cur_row][new_col] != H_NULL) {
 		ms->cur_col = new_col;
@@ -152,7 +163,7 @@ int move_cursor_left (struct menu_state *ms) {
 	return 1;
 }
 
-int move_cursor_right (struct menu_state *ms) {
+static int move_cursor_right (struct menu_state *ms) {
 	int new_col = (ms->cur_col < ms->col_len - 1) ? (ms->cur_col + 1) : 0;
 	if (ms->loaded_secrets [ms->cur_row][new_col] != H_NULL) {
 		ms->cur_col = new_col;
@@ -162,7 +173,7 @@ int move_cursor_right (struct menu_state *ms) {
 	return 1;
 }
 
-int move_cursor_up (struct menu_state *ms) {
+static int move_cursor_up (struct menu_state *ms) {
 	if (ms->cur_row > 0) {
 		/* case 1: cursor is at not in top position within menu; move up */
 		ms->cur_row -= 1;
@@ -190,7 +201,7 @@ int move_cursor_up (struct menu_state *ms) {
 	}
 }
 
-int move_cursor_down (struct menu_state *ms) {
+static int move_cursor_down (struct menu_state *ms) {
 	/* case 1: cursor is at not in bottom position within menu;
 	 * move down only if an item is there 
 	 */

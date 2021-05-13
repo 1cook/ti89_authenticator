@@ -20,23 +20,4 @@ struct menu_state {
 	struct tile_state ts;
 };
 
-/* If any of these functions return zero, the menu_state struct 
- * can be considered in a broken state.
- * must call clear state immediately and exit the program
- */
-
-
-/* resets the menu state to the position putting the cursor at the top left and the position at top 
- * returns 0 on failure, 1 on success, 2 if no codes are in the manifest.
- */
-int reset_at_position (struct menu_state *ms, unsigned short top);
-unsigned short position (struct menu_state *ms);
-/* frees the memory in the menu state. unlocks all locked files */
-void clear_state (struct menu_state *ms);
-/* updates all codes that need upated */
-int update_codes (struct menu_state *ms, int64_t current_time, int force_draw);
-int move_cursor_left (struct menu_state *ms);
-int move_cursor_right (struct menu_state *ms);
-int move_cursor_up (struct menu_state *ms);
-int move_cursor_down (struct menu_state *ms);
 #endif
